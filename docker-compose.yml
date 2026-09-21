@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  # ----------------------------------------------------------- MySQL database
+  mysql:
+    image: mysql:8.0
+    container_name: scaalable-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Ayush@2005            # <-- change if you like
+      MYSQL_DATABASE: scaalable_crm
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pAyush@2005"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # --------------------------------------------------- Spring Boot backend
+  backend:
+    build: ./backend
+    container_name: scaalable-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/scaalable_crm?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: Ayush@2005
+      # Plivo credentials (dialer runs in DRY-RUN mode until these are set)
+      PLIVO_AUTH_ID: ${PLIVO_AUTH_ID:-YOUR_PLIVO_AUTH_ID}
+      PLIVO_AUTH_TOKEN: ${PLIVO_AUTH_TOKEN:-YOUR_PLIVO_AUTH_TOKEN}
+      PLIVO_PHONE_NUMBER: ${PLIVO_PHONE_NUMBER:-YOUR_PLIVO_PHONE_NUMBER}
+      # Public HTTPS URL Plivo can reach (webhooks for answer + hangup)
+      PLIVO_CALLBACK_BASE_URL: ${PLIVO_CALLBACK_BASE_URL:-}
+    ports:
+      - "8081:8080"
+    healthcheck:
+      # /api/auth/login is POST-only, so a GET answers 405 — any HTTP
+      # response at all means the app is up; a refused connection prints none.
+      test: ["CMD-SHELL", "wget -S -q -O /dev/null http://localhost:8080/api/auth/login 2>&1 | grep -q 'HTTP/'"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  # ------------------------------------------------------ React frontend
+  frontend:
+    build: ./frontend
+    container_name: scaalable-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "3001:80"
+
+volumes:
+  mysql-data:

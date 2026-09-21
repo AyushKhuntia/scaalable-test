@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: scaalable-crm
+  config:
+    import: optional:file:../.env[.properties]
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/scaalable_crm?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: Ayush@2005         # <-- change to your MySQL password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate    # schema is managed by schema.sql below
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  sql:
+    init:
+      mode: always
+      continue-on-error: false
+
+server:
+  port: 8080
+
+# ---------------------------------------------------------------------------
+# SCAALABLE default admin (seeded on first startup)
+#   username: admin
+#   password: admin
+# ---------------------------------------------------------------------------
+
+app:
+  jwt:
+    secret: scaalable-crm-super-secret-key-change-me-in-production-0123456789
+    expiration-ms: 86400000   # 24 hours
+
+plivo:
+  auth-id: ${PLIVO_AUTH_ID:YOUR_PLIVO_AUTH_ID}
+  auth-token: ${PLIVO_AUTH_TOKEN:YOUR_PLIVO_AUTH_TOKEN}
+  phone-number: ${PLIVO_PHONE_NUMBER:YOUR_PLIVO_PHONE_NUMBER}
+  # Public URL of this backend reachable BY PLIVO's servers, for answer /
+  # hangup webhooks (PlivoWebhookController). Empty = webhooks disabled
+  # (fine for local dev; set it when deployed, e.g. https://crm.yourcompany.com)
+  callback-base-url: ${PLIVO_CALLBACK_BASE_URL:}

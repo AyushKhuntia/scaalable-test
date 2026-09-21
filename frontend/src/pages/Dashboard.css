@@ -1,0 +1,420 @@
+/* =========================================================
+   DASHBOARD PAGE MODULE STYLES (ADMIN + AGENT)
+   ========================================================= */
+
+.dashboard-wrapper,
+.agent-dashboard {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header Section */
+.dashboard-heading,
+.agent-dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-eyebrow,
+.agent-dashboard-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.dashboard-heading h2,
+.agent-dashboard-header h2 {
+  font-size: 1.875rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.dashboard-heading p,
+.agent-dashboard-header p {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.agent-start-call-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  transition: all 0.15s ease;
+}
+
+.agent-start-call-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  color: #ffffff;
+  text-decoration: none;
+}
+
+/* KPI Card Grid */
+.dashboard-kpi-grid,
+.agent-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-kpi-card,
+.agent-kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dashboard-kpi-card:hover,
+.agent-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.dashboard-kpi-icon,
+.agent-kpi-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dashboard-kpi-card div,
+.agent-kpi-card div {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-kpi-card span,
+.agent-kpi-card span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dashboard-kpi-card strong,
+.agent-kpi-card strong {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+/* Main Grid Layout */
+.dashboard-grid,
+.agent-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-card,
+.agent-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-recent-card,
+.recent-calls-card {
+  grid-column: 1 / -1;
+}
+
+.dashboard-card-header,
+.agent-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.875rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dashboard-card-header h3,
+.agent-card-header h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dashboard-card-header p,
+.agent-card-header p {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.dashboard-card-header a,
+.agent-card-header a {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.dashboard-card-header a:hover,
+.agent-card-header a:hover {
+  text-decoration: underline;
+}
+
+/* Status Distribution List */
+.dashboard-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dashboard-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0.875rem;
+  border-radius: var(--radius-md);
+  background: var(--bg-page);
+  font-size: 0.875rem;
+}
+
+.dashboard-status-row span {
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.dashboard-status-row strong {
+  font-weight: 700;
+  color: var(--text-primary);
+  background: #ffffff;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+}
+
+/* Agent Roster List */
+.dashboard-agent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.dashboard-agent-item {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: #ffffff;
+}
+
+.dashboard-agent-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-agent-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-agent-info strong {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.dashboard-agent-info span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.dashboard-agent-role {
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+/* Tables in Dashboard */
+.dashboard-table-wrapper,
+.agent-table-wrapper {
+  overflow-x: auto;
+}
+
+.dashboard-table,
+.agent-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.dashboard-table th,
+.agent-table th {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  background: var(--bg-page);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dashboard-table td,
+.agent-table td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.dashboard-table tr:last-child td,
+.agent-table tr:last-child td {
+  border-bottom: none;
+}
+
+.dashboard-table tbody tr:hover,
+.agent-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.dashboard-lead-link,
+.agent-lead-link {
+  font-weight: 600;
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.dashboard-lead-link:hover,
+.agent-lead-link:hover {
+  text-decoration: underline;
+}
+
+.calling-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--bg-page);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.calling-summary span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.calling-summary strong {
+  display: block;
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-top: 0.25rem;
+}
+
+.followup-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.followup-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.followup-item:hover {
+  border-color: var(--primary-border);
+  background: var(--primary-light);
+  text-decoration: none;
+}
+
+.followup-item strong {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.followup-item span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.dashboard-loading,
+.dashboard-empty,
+.agent-empty {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.dashboard-error {
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border: 1px solid #fecaca;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 900px) {
+  .dashboard-grid,
+  .agent-dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
