@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS dispositions (
 -- ----------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS call_logs (
     call_id           BIGINT PRIMARY KEY AUTO_INCREMENT,
-    lead_id           BIGINT NOT NULL,
+    lead_id           BIGINT NULL,
     user_id           BIGINT NOT NULL,                     -- agent who made the call
     twilio_call_sid   VARCHAR(64),                         -- provider call ID (kept for backward compat)
     direction         ENUM('OUTBOUND', 'INBOUND') NOT NULL DEFAULT 'OUTBOUND',

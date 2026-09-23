@@ -15,7 +15,7 @@ public class CallLog {
     private Long callId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lead_id", nullable = false)
+    @JoinColumn(name = "lead_id", nullable = true)
     private Lead lead;
 
     @ManyToOne(fetch = FetchType.LAZY)

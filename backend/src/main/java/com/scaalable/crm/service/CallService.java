@@ -56,8 +56,11 @@ public class CallService {
      */
     @Transactional
     public Map<String, Object> placeCall(CallRequest request, User agent) {
-        Lead lead = leadRepository.findById(request.getLeadId())
-                .orElseThrow(() -> new IllegalArgumentException("Lead not found: " + request.getLeadId()));
+        Lead lead = null;
+        if (request.getLeadId() != null) {
+            lead = leadRepository.findById(request.getLeadId())
+                    .orElseThrow(() -> new IllegalArgumentException("Lead not found: " + request.getLeadId()));
+        }
 
         CallLog call = new CallLog();
         call.setLead(lead);
@@ -147,7 +150,7 @@ public class CallService {
         call = callLogRepository.save(call);
 
         // mark the lead contacted
-        if (lead.getStatus() == Lead.LeadStatus.NEW || lead.getStatus() == Lead.LeadStatus.ASSIGNED) {
+        if (lead != null && (lead.getStatus() == Lead.LeadStatus.NEW || lead.getStatus() == Lead.LeadStatus.ASSIGNED)) {
             lead.setStatus(Lead.LeadStatus.CONTACTED);
             leadRepository.save(lead);
         }
@@ -173,13 +176,15 @@ public class CallService {
 
             // sync lead status with the disposition
             Lead lead = call.getLead();
-            switch (d.getDispositionName()) {
-                case "CONVERTED"      -> lead.setStatus(Lead.LeadStatus.CONVERTED);
-                case "NOT_INTERESTED" -> lead.setStatus(Lead.LeadStatus.NOT_INTERESTED);
-                case "CALLBACK", "NO_ANSWER", "BUSY", "VOICEMAIL" -> lead.setStatus(Lead.LeadStatus.FOLLOW_UP);
-                default -> lead.setStatus(Lead.LeadStatus.CONTACTED);
+            if (lead != null) {
+                switch (d.getDispositionName()) {
+                    case "CONVERTED"      -> lead.setStatus(Lead.LeadStatus.CONVERTED);
+                    case "NOT_INTERESTED" -> lead.setStatus(Lead.LeadStatus.NOT_INTERESTED);
+                    case "CALLBACK", "NO_ANSWER", "BUSY", "VOICEMAIL" -> lead.setStatus(Lead.LeadStatus.FOLLOW_UP);
+                    default -> lead.setStatus(Lead.LeadStatus.CONTACTED);
+                }
+                leadRepository.save(lead);
             }
-            leadRepository.save(lead);
         }
 
         call.setNotes(request.getNotes());

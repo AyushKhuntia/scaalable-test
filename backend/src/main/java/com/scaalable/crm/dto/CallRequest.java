@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 /** Payload when an agent places a call to a lead through the dialer. */
 public class CallRequest {
 
-    @NotNull(message = "leadId is required")
     private Long leadId;
 
     @NotBlank(message = "to (destination number) is required")

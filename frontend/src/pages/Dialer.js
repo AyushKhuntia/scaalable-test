@@ -21,6 +21,10 @@ export default function Dialer({ auth }) {
   const [msg, setMsg] = useState('');
   const [err, setErr] = useState('');
   const [history, setHistory] = useState([]);
+  const [dialMode, setDialMode] = useState('queue'); // 'queue' | 'custom'
+  const [autoCreateLead, setAutoCreateLead] = useState(true);
+  const [customDestination, setCustomDestination] = useState('');
+  const [countryCode, setCountryCode] = useState('+91');
 
   useEffect(() => {
     // If "Call" was clicked in My Leads, pre-select that lead
@@ -64,10 +68,38 @@ export default function Dialer({ auth }) {
   const dial = async () => {
     setErr('');
     setMsg('');
-    if (!lead || !number) {
-      setErr('Please select a lead and enter a valid phone number.');
-      return;
+    
+    let targetNumber = dialMode === 'custom' ? (countryCode + customDestination) : number;
+    let targetLeadId = lead?.leadId || null;
+
+    if (dialMode === 'queue') {
+      if (!lead || !number) {
+        setErr('Please select a lead and enter a valid phone number.');
+        return;
+      }
+    } else {
+      if (!customDestination) {
+        setErr('Please enter a destination phone number.');
+        return;
+      }
+      if (autoCreateLead) {
+        try {
+          const res = await api.post('/api/leads', {
+            firstName: 'Custom',
+            lastName: 'Call',
+            phone: targetNumber,
+            status: 'NEW',
+            source: 'WEB'
+          });
+          targetLeadId = res.data.leadId;
+          setLead(res.data);
+        } catch (e) {
+          setErr('Failed to auto-create lead.');
+          return;
+        }
+      }
     }
+
     const myPhone = agentPhone.trim();
     if (!/^\+[1-9]\d{7,14}$/.test(myPhone)) {
       setErr('Enter YOUR agent phone number in E.164 format (e.g. +919876543210) for callback purposes.');
@@ -77,8 +109,8 @@ export default function Dialer({ auth }) {
 
     try {
       const { data } = await api.post('/api/calls/dial', {
-        leadId: lead.leadId,
-        to: number,
+        leadId: targetLeadId,
+        to: targetNumber,
         agentPhone: myPhone,
       });
       setCallInfo(data);
@@ -133,24 +165,67 @@ export default function Dialer({ auth }) {
         {/* Left Station: Call Controls & Outcome */}
         <div>
           <div className="dialer-card">
-            <h2 className="dialer-card-title">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-              </svg>
-              <span>Outbound Station</span>
+            <h2 className="dialer-card-title dialer-card-title-with-tabs">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+                <span>Outbound Station</span>
+              </div>
+              <div className="dialer-tabs">
+                <button className={dialMode === 'queue' ? 'active' : ''} onClick={() => setDialMode('queue')}>
+                  Lead Queue
+                </button>
+                <button className={dialMode === 'custom' ? 'active' : ''} onClick={() => setDialMode('custom')}>
+                  Custom Direct Call
+                </button>
+              </div>
             </h2>
 
-            <div className="field-group">
-              <label>Select Target Lead</label>
-              <select value={lead?.leadId || ''} onChange={(e) => pickLead(e.target.value)}>
-                <option value="">Choose a lead from queue...</option>
-                {safeLeads.map((l) => (
-                  <option key={l.leadId} value={l.leadId}>
-                    {l.firstName} {l.lastName} — {l.phone} {l.company ? `(${l.company})` : ''}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {dialMode === 'queue' ? (
+              <div className="field-group">
+                <label>Select Target Lead</label>
+                <select value={lead?.leadId || ''} onChange={(e) => pickLead(e.target.value)}>
+                  <option value="">Choose a lead from queue...</option>
+                  {safeLeads.map((l) => (
+                    <option key={l.leadId} value={l.leadId}>
+                      {l.firstName} {l.lastName} — {l.phone} {l.company ? `(${l.company})` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : (
+              <>
+                <div className="field-group">
+                  <label>Direct Destination Phone Number (E.164)</label>
+                  <div className="phone-input-group">
+                    <select value={countryCode} onChange={(e) => setCountryCode(e.target.value)} className="country-select">
+                      <option value="+91">IN +91 (IN)</option>
+                      <option value="+1">US +1 (US)</option>
+                      <option value="+44">UK +44 (UK)</option>
+                      <option value="+61">AU +61 (AU)</option>
+                    </select>
+                    <input
+                      type="text"
+                      value={customDestination}
+                      onChange={(e) => setCustomDestination(e.target.value)}
+                      placeholder="9876543210"
+                    />
+                  </div>
+                </div>
+                <div className="field-group checkbox-group">
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', textTransform: 'none', fontWeight: '500' }}>
+                    <input
+                      type="checkbox"
+                      checked={autoCreateLead}
+                      onChange={(e) => setAutoCreateLead(e.target.checked)}
+                      style={{ width: 'auto', margin: 0 }}
+                    />
+                    Auto-create and log this custom direct call as a new CRM lead record
+                  </label>
+                </div>
+              </>
+            )}
 
             <div className="field-row">
               <div className="field-group">
@@ -167,14 +242,16 @@ export default function Dialer({ auth }) {
                 <label>Number to Dial (E.164)</label>
                 <input
                   type="text"
-                  value={number}
+                  value={dialMode === 'custom' ? (customDestination ? countryCode + customDestination : '') : number}
                   onChange={(e) => setNumber(e.target.value)}
                   placeholder="+919876543210"
+                  readOnly={dialMode === 'custom'}
+                  style={dialMode === 'custom' ? { backgroundColor: '#f3f4f6', color: '#6b7280' } : {}}
                 />
               </div>
             </div>
 
-            <button className="btn-place-call" onClick={dial} disabled={!lead}>
+            <button className="btn-place-call" onClick={dial} disabled={dialMode === 'queue' && !lead}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
               </svg>

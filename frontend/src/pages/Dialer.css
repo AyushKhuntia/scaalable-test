@@ -59,6 +59,49 @@
   gap: 0.5rem;
 }
 
+.dialer-card-title-with-tabs {
+  justify-content: space-between;
+}
+
+.dialer-tabs {
+  display: flex;
+  gap: 0.5rem;
+  background: var(--bg-page);
+  padding: 0.25rem;
+  border-radius: var(--radius-md);
+}
+
+.dialer-tabs button {
+  background: transparent;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-radius: calc(var(--radius-md) - 2px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dialer-tabs button:hover {
+  color: var(--text-primary);
+}
+
+.dialer-tabs button.active {
+  background: #ffffff;
+  color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.phone-input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.country-select {
+  flex: 0 0 120px;
+}
+
 .field-group {
   display: flex;
   flex-direction: column;
