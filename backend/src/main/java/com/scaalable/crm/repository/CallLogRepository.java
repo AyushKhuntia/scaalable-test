@@ -17,11 +17,11 @@ public interface CallLogRepository extends JpaRepository<CallLog, Long> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE CallLog c SET c.recordingUrl = :url, c.durationSeconds = CASE WHEN c.durationSeconds IS NULL OR c.durationSeconds = 0 THEN :duration ELSE c.durationSeconds END WHERE c.callId = :id")
+    @Query("UPDATE CallLog c SET c.recordingUrl = :url, c.durationSeconds = CASE WHEN :duration IS NOT NULL AND :duration > 0 THEN :duration ELSE c.durationSeconds END WHERE c.callId = :id")
     int updateRecordingInfo(@Param("id") Long id, @Param("url") String url, @Param("duration") Integer duration);
 
     @Modifying
     @Transactional
-    @Query("UPDATE CallLog c SET c.callStatus = :status, c.endTime = CURRENT_TIMESTAMP, c.durationSeconds = CASE WHEN c.durationSeconds IS NULL OR c.durationSeconds = 0 THEN :duration ELSE c.durationSeconds END WHERE c.callId = :id")
+    @Query("UPDATE CallLog c SET c.callStatus = :status, c.endTime = CURRENT_TIMESTAMP, c.durationSeconds = CASE WHEN (c.recordingUrl IS NULL OR c.recordingUrl = '') AND :duration IS NOT NULL AND :duration > 0 THEN :duration ELSE c.durationSeconds END WHERE c.callId = :id")
     int updateHangupInfo(@Param("id") Long id, @Param("status") String status, @Param("duration") Integer duration);
 }
